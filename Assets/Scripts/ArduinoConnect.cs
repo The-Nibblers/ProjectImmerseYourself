@@ -22,27 +22,21 @@ public class ArduinoController : MonoBehaviour
 
     void Update()
     {
-        // send signal when pressing space
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && sp.IsOpen)
-            sp.Write("1");
-        if (Keyboard.current.spaceKey.wasReleasedThisFrame && sp.IsOpen)
-            sp.Write("0");
-
-        // check for messages from Arduino
         if (sp.IsOpen)
         {
             try
             {
-                string message = sp.ReadLine();  // read serial line
-                if (message.Contains("TOUCHED"))
+                string message = sp.ReadLine();
+                if (message.Contains("ALL_ON"))
                 {
-                    Debug.Log("Arduino said wire touched!");
+                    Debug.Log("🔥 ALL LEDs ON! Puzzle solved!");
+                }
+                else if (message.Contains("NOT_ALL"))
+                {
+                    Debug.Log("💡 Not all LEDs on anymore...");
                 }
             }
-            catch (System.TimeoutException)
-            {
-                // no message yet
-            }
+            catch (System.TimeoutException) { }
         }
     }
 
