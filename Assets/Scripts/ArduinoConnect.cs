@@ -44,7 +44,7 @@ public class ArduinoController : MonoBehaviour
         // Example: Press B to buzz 2.5s
         if (Keyboard.current.bKey.wasPressedThisFrame)
         {
-            Buzz(2.5f);
+            Buzz(1.5f);
         }
     }
 
