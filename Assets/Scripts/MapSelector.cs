@@ -1,0 +1,132 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class MapSelector : MonoBehaviour
+{
+    [Header("Points and cursor")]
+    public List<Transform> points = new List<Transform>();
+    public Transform cursor;
+
+    [Header("Navigation")]
+    public float snapDuration = 0.25f;      // Time to interpolate between points
+    public AnimationCurve snapCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    public bool wrapAround = true;          // Wrap at ends
+
+    [Header("Input")]
+    public InputActionAsset actionsAsset;
+    public string actionMapName = "UI";    // Or "UI"
+    public string navigateActionName = "Navigate";
+    public string submitActionName = "Submit";
+
+    private InputAction navigateAction;
+    private InputAction submitAction;
+
+    private int currentIndex = 0;
+    private bool isSnapping = false;
+    private Vector2 navigateBuffer = Vector2.zero; // Debounce for held keys
+
+    // Stores selected coordinates
+    public List<Vector3> selectedCoordinates = new List<Vector3>();
+
+    private void OnEnable()
+    {
+        var map = actionsAsset.FindActionMap(actionMapName, true);
+        navigateAction = map.FindAction(navigateActionName, true);
+        submitAction = map.FindAction(submitActionName, true);
+
+        navigateAction.performed += OnNavigate;
+        submitAction.performed += OnSubmit;
+
+        map.Enable();
+
+        // Initialize cursor at first point if available
+        if (cursor != null && points.Count > 0)
+        {
+            cursor.position = points[currentIndex].position;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (navigateAction != null) navigateAction.performed -= OnNavigate;
+        if (submitAction != null) submitAction.performed -= OnSubmit;
+        actionsAsset.Disable();
+    }
+
+    private void OnNavigate(InputAction.CallbackContext ctx)
+    {
+        Vector2 input = ctx.ReadValue<Vector2>();
+
+        // Simple axis gating so held keys don’t spam moves
+        // Only register when the axis crosses a threshold from near-zero
+        const float threshold = 0.5f;
+        bool xTrigger = Mathf.Abs(input.x) > threshold && Mathf.Abs(navigateBuffer.x) <= threshold;
+        bool yTrigger = Mathf.Abs(input.y) > threshold && Mathf.Abs(navigateBuffer.y) <= threshold;
+
+        if (xTrigger)
+        {
+            if (input.x > 0) MoveToNext();
+            else MoveToPrevious();
+        }
+        else if (yTrigger)
+        {
+            // Optional: vertical navigation if points are laid out in a grid
+            // Here we’ll treat up/down as next/previous too
+            if (input.y > 0) MoveToPrevious();
+            else MoveToNext();
+        }
+
+        navigateBuffer = input;
+    }
+
+    private void OnSubmit(InputAction.CallbackContext ctx)
+    {
+        if (points.Count == 0) return;
+        Vector3 selected = points[currentIndex].position;
+        selectedCoordinates.Add(selected);
+        // Optional: feedback (sound, highlight, event)
+        Debug.Log($"Selected point {currentIndex} at {selected}");
+    }
+
+    private void MoveToNext()
+    {
+        if (points.Count == 0) return;
+        int next = currentIndex + 1;
+        if (next >= points.Count) next = wrapAround ? 0 : currentIndex;
+        SnapToIndex(next);
+    }
+
+    private void MoveToPrevious()
+    {
+        if (points.Count == 0) return;
+        int prev = currentIndex - 1;
+        if (prev < 0) prev = wrapAround ? points.Count - 1 : currentIndex;
+        SnapToIndex(prev);
+    }
+
+    private void SnapToIndex(int newIndex)
+    {
+        if (isSnapping || newIndex == currentIndex || cursor == null) return;
+        StopAllCoroutines();
+        StartCoroutine(SnapRoutine(points[currentIndex].position, points[newIndex].position, newIndex));
+    }
+
+    private IEnumerator SnapRoutine(Vector3 from, Vector3 to, int targetIndex)
+    {
+        isSnapping = true;
+        float t = 0f;
+        while (t < snapDuration)
+        {
+            t += Time.deltaTime;
+            float alpha = Mathf.Clamp01(t / snapDuration);
+            float eased = snapCurve.Evaluate(alpha);
+            cursor.position = Vector3.LerpUnclamped(from, to, eased);
+            yield return null;
+        }
+        cursor.position = to;
+        currentIndex = targetIndex;
+        isSnapping = false;
+    }
+}
