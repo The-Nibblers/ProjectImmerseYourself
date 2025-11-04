@@ -59,7 +59,7 @@ public class TimerManager : MonoBehaviour
     {
         int minutes = Mathf.FloorToInt(CurrentTime / 60);
         int seconds = Mathf.FloorToInt(CurrentTime % 60);
-        TimerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        TimerText.text = string.Format("{0:00}  {1:00}", minutes, seconds);
     }
 
     private void TimerEnd()
