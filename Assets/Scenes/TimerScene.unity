@@ -406,7 +406,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[Current Order]'
+  m_text: '[Current Task]'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7636b6ddb7b4ad2458bcec6ee1065207, type: 2}
   m_sharedMaterial: {fileID: 8655871170133094583, guid: 7636b6ddb7b4ad2458bcec6ee1065207, type: 2}
@@ -1552,7 +1552,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Next order loaded '
+  m_text: 'Next task loaded '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7636b6ddb7b4ad2458bcec6ee1065207, type: 2}
   m_sharedMaterial: {fileID: 8655871170133094583, guid: 7636b6ddb7b4ad2458bcec6ee1065207, type: 2}
