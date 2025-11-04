@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0c673c0cf47a23444b0b7e5d272af2a6
+guid: baaa001d63462b34a95186ce325af208
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - PIXELYA Trial
+  - Dot Font
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
