@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -8,15 +9,23 @@ public class MapSelector : MonoBehaviour
 {
     [Header("Points and cursor")]
     public List<Transform> points = new List<Transform>();
+    [SerializeField] private List<string> pointText = new List<string>();
     public Transform cursor;
+    [SerializeField] private TextMeshProUGUI feedbackText;
 
     [Header("Visual Feedback")]
     public Color hoverColor = Color.yellow;
     public Color normalColor = Color.white;
+    [SerializeField] private TextMeshProUGUI submitText;
+    [SerializeField] private TextMeshProUGUI errorText;
+    [SerializeField] private string submitTextString = "Press [P] to submit flightpath.";
+    [SerializeField] private CanvasGroup animationCanvas;
+    [SerializeField] private CanvasGroup successCanvas;
 
     [Header("Audio Feedback")]
     public AudioSource audioSource;     // Assign in Inspector
     public AudioClip hoverSound;        // Assign in Inspector
+    [SerializeField] private AudioClip dialupSound;
 
     [Header("Navigation")]
     public float snapDuration = 0.25f;
@@ -28,9 +37,11 @@ public class MapSelector : MonoBehaviour
     public string actionMapName = "UI";
     public string navigateActionName = "Navigate";
     public string submitActionName = "Submit";
+    [SerializeField] private string flightActionName = "Flight";
 
     private InputAction navigateAction;
     private InputAction submitAction;
+    private InputAction flightAction;
 
     private int currentIndex = 0;
     private bool isSnapping = false;
@@ -44,9 +55,12 @@ public class MapSelector : MonoBehaviour
         var map = actionsAsset.FindActionMap(actionMapName, true);
         navigateAction = map.FindAction(navigateActionName, true);
         submitAction = map.FindAction(submitActionName, true);
+        flightAction = map.FindAction(flightActionName, true);
 
         navigateAction.performed += OnNavigate;
         submitAction.performed += OnSubmit;
+        flightAction.performed += OnFlightSubmit;
+
 
         map.Enable();
 
@@ -62,6 +76,49 @@ public class MapSelector : MonoBehaviour
         if (navigateAction != null) navigateAction.performed -= OnNavigate;
         if (submitAction != null) submitAction.performed -= OnSubmit;
         actionsAsset.Disable();
+    }
+
+    private void Update()
+    {
+        if (selectedCoordinates.Count >= 4)
+        {
+            submitText.text = submitTextString;
+        }
+        else
+        {
+            submitText.text = "Press [Enter] to add a star to flightpath.";
+        }
+    }
+
+    private void OnFlightSubmit(InputAction.CallbackContext ctx)
+    {
+        if(selectedCoordinates.Count >= 4)
+        {
+            Debug.Log("Flight path initiated");
+            // TODO: Implement flight animation
+            StartCoroutine(FlightPathAnimation());
+        }
+        else
+        {
+            StartCoroutine(TimedMessage());
+        }
+    }
+
+    IEnumerator FlightPathAnimation()
+    {
+        audioSource.PlayOneShot(dialupSound);
+        animationCanvas.alpha = 1.0f;
+        yield return new WaitForSeconds(dialupSound.length);
+        animationCanvas.alpha = 0;
+        successCanvas.alpha = 1.0f;
+        audioSource.PlayOneShot(hoverSound);
+    }
+
+    IEnumerator TimedMessage()
+    {
+        errorText.text = "ERROR: NOT ENOUGH STARS SELECTED!";
+        yield return new WaitForSeconds(2f);
+        errorText.text = "";
     }
 
     private void OnNavigate(InputAction.CallbackContext ctx)
@@ -92,6 +149,12 @@ public class MapSelector : MonoBehaviour
         Vector3 selected = points[currentIndex].position;
         selectedCoordinates.Add(selected);
         Debug.Log($"Selected point {currentIndex} at {selected}");
+
+        string text = (currentIndex < pointText.Count) ? pointText[currentIndex] : $"Point {currentIndex}";
+        if (feedbackText != null)
+            feedbackText.text = $"Selected: {text}";
+
+        Debug.Log($"Selected point {currentIndex} at {selected} ({text})");
     }
 
     private void MoveToNext()
@@ -147,6 +210,11 @@ public class MapSelector : MonoBehaviour
             {
                 img.color = (i == highlightIndex) ? hoverColor : normalColor;
             }
+        }
+        if (feedbackText != null)
+        {
+            string text = (highlightIndex < pointText.Count) ? pointText[highlightIndex] : $"Starsystem: {highlightIndex}";
+            feedbackText.text = text;
         }
     }
 
