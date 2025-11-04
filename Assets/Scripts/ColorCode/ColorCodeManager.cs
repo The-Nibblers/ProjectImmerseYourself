@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -11,11 +12,13 @@ public struct colorCode
     public Color color;
     public int pass;
 }
+
 public class ColorCodeManager : MonoBehaviour
 {
     [SerializeField] private List<colorCode> colorCodeList;
     [SerializeField] private Image image;
     [SerializeField] private TMP_InputField input;
+    [SerializeField] private TMP_Text conformationText;
     private colorCode selectedColor;
 
     public void Start()
@@ -38,12 +41,23 @@ public class ColorCodeManager : MonoBehaviour
         }
         else
         {
-            input.text = "";
+            StartCoroutine(InvalidHandling());
         }
     }
 
     private void HandleSuccess()
     {
-        
+        input.gameObject.SetActive(false);
+        conformationText.gameObject.SetActive(true);
+        conformationText.text = "correct!";
+    }
+
+    IEnumerator  InvalidHandling()
+    {
+        input.text = "";
+        conformationText.text = "Invalid Passkey";
+        conformationText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        conformationText.gameObject.SetActive(false);
     }
 }
