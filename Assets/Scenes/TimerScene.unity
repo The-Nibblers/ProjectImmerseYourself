@@ -434,10 +434,27 @@ MonoBehaviour:
   SpaceToConfirm: {fileID: 798443008}
   OrderImage: {fileID: 430259046}
   orderHolder:
-  - orderName: first
-    orderImage: {fileID: 21300000, guid: cd283dd602d7750458385f9545dcf772, type: 3}
-  - orderName: second
-    orderImage: {fileID: 21300000, guid: 200803aac5d530f44886b26639e76c02, type: 3}
+  - orderName: electrical
+    orderImage: {fileID: 21300000, guid: 158fb7f0818c2b348aaadc33f3dafb3b, type: 3}
+    HasAudio: 1
+    AudioClipName: Rlectricity_Broken
+    LoopAudioClipName: 
+  - orderName: vent
+    orderImage: {fileID: 21300000, guid: 7fd35f076e404b64b92125cce3e609cd, type: 3}
+    HasAudio: 1
+    AudioClipName: VentStop
+    LoopAudioClipName: VentLoop
+  - orderName: map
+    orderImage: {fileID: 21300000, guid: 1600a2fa42be3e0409945beef35fb46a, type: 3}
+    HasAudio: 0
+    AudioClipName: 
+    LoopAudioClipName: 
+  - orderName: slop
+    orderImage: {fileID: 21300000, guid: 6113c67dc86a35e41abefaf8098403f4, type: 3}
+    HasAudio: 1
+    AudioClipName: TimeBroken
+    LoopAudioClipName: 
+  audioManager: {fileID: 2033887613}
 --- !u!1 &650959753
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,7 +745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83befa89441c5f846b8ad08fb4fc5259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimerManager
-  MaxTimeInSeconds: 10
+  MaxTimeInSeconds: 300
   TimerText: {fileID: 1430555870}
   TimerSlider: {fileID: 62900332}
 --- !u!1 &798443008
@@ -1556,6 +1573,7 @@ Transform:
   m_Children:
   - {fileID: 766204072}
   - {fileID: 447278760}
+  - {fileID: 2033887612}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1556212764
@@ -1977,6 +1995,87 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 1
   m_TargetDisplay: 0
+--- !u!1 &2033887611
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2033887612}
+  - component: {fileID: 2033887613}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2033887612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033887611}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1503293434}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2033887613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033887611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09c4ab66c2602f64ab5998f0944164e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  audioClips:
+  - ID: Ambience
+    Clip: {fileID: 8300000, guid: 25719089716f6b64f92344af2bb1c493, type: 3}
+    Loop: 1
+  - ID: Electricity_Break
+    Clip: {fileID: 8300000, guid: c656a22a3dc307948bcebe576654ebb5, type: 3}
+    Loop: 1
+  - ID: Rlectricity_Broken
+    Clip: {fileID: 8300000, guid: edfaf11bdd415b445a20dc769e4697db, type: 3}
+    Loop: 1
+  - ID: Error
+    Clip: {fileID: 8300000, guid: f2092acfc5a21dd439bf016da1f54a5d, type: 3}
+    Loop: 0
+  - ID: MusicProblem
+    Clip: {fileID: 8300000, guid: 6b6feac52d013f544af4cb7a78fe7cd0, type: 3}
+    Loop: 0
+  - ID: PlayerDeath
+    Clip: {fileID: 8300000, guid: 463d8479dadbbea4bbe705dc13e459c4, type: 3}
+    Loop: 0
+  - ID: TaskComplete
+    Clip: {fileID: 8300000, guid: c9b25d191daac5a4cad2c0f3fb769e51, type: 3}
+    Loop: 0
+  - ID: TimeBroken
+    Clip: {fileID: 8300000, guid: 22a754a16fce4cf4986683831815e914, type: 3}
+    Loop: 1
+  - ID: TimeFixed
+    Clip: {fileID: 8300000, guid: 6bc9a6801dbe6c746899f1559c30e3f1, type: 3}
+    Loop: 1
+  - ID: VentLoop
+    Clip: {fileID: 8300000, guid: 0fa46bfc83b1e8c4d970c273c0d8de09, type: 3}
+    Loop: 1
+  - ID: VentStop
+    Clip: {fileID: 8300000, guid: bc70173e5553dee4f81bdf4d2f0a83aa, type: 3}
+    Loop: 1
+  - ID: MusicCalm
+    Clip: {fileID: 8300000, guid: d8ab4f2c004a1624aac864116adffdb3, type: 3}
+    Loop: 1
 --- !u!1 &2089164654
 GameObject:
   m_ObjectHideFlags: 0
