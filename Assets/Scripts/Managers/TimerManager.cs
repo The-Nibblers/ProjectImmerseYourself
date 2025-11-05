@@ -1,11 +1,13 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class TimerManager : MonoBehaviour
 {
     [SerializeField] private int MaxTimeInSeconds;
     [SerializeField] private TMP_Text TimerText;
+    [SerializeField] private Slider TimerSlider;
 
     private bool TimerIsActive = false;
     private float CurrentTime;
@@ -13,12 +15,18 @@ public class TimerManager : MonoBehaviour
     void Start()
     {
         CurrentTime = MaxTimeInSeconds;
+        TimerSlider.maxValue = MaxTimeInSeconds;
+        TimerSlider.value = MaxTimeInSeconds;
         DisplayTime();
     }
 
     void Update()
     {
-        if(TimerIsActive) TimerUpdate();
+        if (TimerIsActive)
+        {
+            TimerUpdate();
+            TimerSlider.value = CurrentTime;
+        } 
     }
 
     public void AddTime(float addedTime)
@@ -59,7 +67,7 @@ public class TimerManager : MonoBehaviour
     {
         int minutes = Mathf.FloorToInt(CurrentTime / 60);
         int seconds = Mathf.FloorToInt(CurrentTime % 60);
-        TimerText.text = string.Format("{0:00}  {1:00}", minutes, seconds);
+        TimerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
     private void TimerEnd()
