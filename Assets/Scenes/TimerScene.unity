@@ -1152,7 +1152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83befa89441c5f846b8ad08fb4fc5259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimerManager
-  MaxTimeInSeconds: 10
+  MaxTimeInSeconds: 300
   TimerText: {fileID: 1430555870}
   TimerSlider: {fileID: 62900332}
   MainMixer: {fileID: 24100000, guid: d4850cad42d8ec4428f9abb97f3e63b5, type: 2}
@@ -2920,7 +2920,7 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: 25719089716f6b64f92344af2bb1c493, type: 3}
     Loop: 1
   - ID: Electricity_Break
-    Clip: {fileID: 8300000, guid: c656a22a3dc307948bcebe576654ebb5, type: 3}
+    Clip: {fileID: 8300000, guid: 01ac923e1272dfc4bbb5b6c4c77dd7de, type: 3}
     Loop: 1
   - ID: Rlectricity_Broken
     Clip: {fileID: 8300000, guid: edfaf11bdd415b445a20dc769e4697db, type: 3}
@@ -2944,7 +2944,7 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: 6bc9a6801dbe6c746899f1559c30e3f1, type: 3}
     Loop: 1
   - ID: VentLoop
-    Clip: {fileID: 8300000, guid: 0fa46bfc83b1e8c4d970c273c0d8de09, type: 3}
+    Clip: {fileID: 8300000, guid: 807c393191af9db4dad94222150bbead, type: 3}
     Loop: 1
   - ID: VentStop
     Clip: {fileID: 8300000, guid: bc70173e5553dee4f81bdf4d2f0a83aa, type: 3}
