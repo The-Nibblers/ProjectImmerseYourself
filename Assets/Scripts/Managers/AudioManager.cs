@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 [System.Serializable]
 public struct AudioClips
@@ -15,14 +16,20 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private List<AudioClips> audioClips = new();
     private List<AudioSource> activeSources = new();
 
+    [Header("Audio Mixer Routing")]
+    [SerializeField] private AudioMixer mainMixer;              // Assign your mixer here
+    [SerializeField] private AudioMixerGroup masterGroup;       // Assign your Master group here
+
     public static event Action<string> OnPlayAudio;
 
     void Start()
     {
+        // Example startup sounds
         PlayByID("VentLoop");
         PlayByID("Ambience");
         PlayByID("MusicCalm");
     }
+
     private void OnEnable()
     {
         OnPlayAudio += PlayByID;
@@ -44,20 +51,25 @@ public class AudioManager : MonoBehaviour
 
         if (clipData == null || clipData.Value.Clip == null)
         {
+            Debug.LogWarning($"Chatgerpeter say: no clip found for ID '{id}'!");
             return;
         }
 
+        // Create a new source
         AudioSource newSource = gameObject.AddComponent<AudioSource>();
         newSource.clip = clipData.Value.Clip;
         newSource.loop = clipData.Value.Loop;
+
+        // 🔥 Route to Master mixer group so TimerManager can fade it later
+        if (masterGroup != null)
+            newSource.outputAudioMixerGroup = masterGroup;
+
         newSource.Play();
 
         activeSources.Add(newSource);
 
-        if (!newSource.loop) // only clean up if not looping
-        {
+        if (!newSource.loop)
             StartCoroutine(RemoveSourceWhenDone(newSource));
-        }
     }
 
     private System.Collections.IEnumerator RemoveSourceWhenDone(AudioSource source)
@@ -88,7 +100,7 @@ public class AudioManager : MonoBehaviour
             }
         }
     }
-    
+
     public void StopAllLoopingAudio()
     {
         for (int i = activeSources.Count - 1; i >= 0; i--)
@@ -102,5 +114,4 @@ public class AudioManager : MonoBehaviour
             }
         }
     }
-
 }

@@ -93,7 +93,6 @@ public class OrderManager : MonoBehaviour
                 OrderPlaceHolder.text = "All orders completed, don't forget to clock out!";
                 SpaceToConfirm.SetActive(false);
                 OrderPlaceHolder.gameObject.SetActive(true);
-                timerManager.PauseTimer();
                 
                 return;
             }
@@ -107,21 +106,24 @@ public class OrderManager : MonoBehaviour
         }
         else
         {
-            audioManager.PlayByID("MusicCalm");
-            audioManager.StopAudioByID("MusicProblem");
-            // Task complete for this order
-            IsOrderShown = false;
-            audioManager.PlayByID("TaskComplete");
-            audioManager.StopAudioByID("Error");
-
-            // Stop the main order sound, start the loop
-            if (currentOrder.HasAudio)
+            if (orderHolder.Count != 0)
             {
-                audioManager.StopAudioByID(currentOrder.AudioClipName);
-                audioManager.PlayByID(currentOrder.LoopAudioClipName);
-            }
+                audioManager.PlayByID("MusicCalm");
+                audioManager.StopAudioByID("MusicProblem");
+                // Task complete for this order
+                IsOrderShown = false;
+                audioManager.PlayByID("TaskComplete");
+                audioManager.StopAudioByID("Error");
 
-            OrderImage.gameObject.SetActive(false);
+                // Stop the main order sound, start the loop
+                if (currentOrder.HasAudio)
+                {
+                    audioManager.StopAudioByID(currentOrder.AudioClipName);
+                    audioManager.PlayByID(currentOrder.LoopAudioClipName);
+                }
+
+                OrderImage.gameObject.SetActive(false);
+            }
         }
     }
 }
