@@ -11,26 +11,41 @@ public class TimerManager : MonoBehaviour
     [SerializeField] private Slider TimerSlider;
 
     [Header("Audio")]
-    [SerializeField] private AudioMixer MainMixer; // assign your AudioMixer here
-    [SerializeField] private AudioSource AudioSource; // for normal beeps
-    [SerializeField] private AudioSource FinalAudioSource;
-    [SerializeField] private AudioSource FinalAudioSource2;// for final 30s clip
+    [SerializeField] private AudioMixer MainMixer;
+    [SerializeField] private AudioSource AudioSource;          
+    [SerializeField] private AudioSource FinalAudioSource;     
+    [SerializeField] private AudioSource FinalAudioSource2;    
     [SerializeField] private AudioClip NormalBeepClip;
     [SerializeField] private AudioClip FinalCountdownClip;
     [SerializeField] private AudioClip FinalCountdownClip2;
+    [SerializeField] private AudioClip DeathClip;              
 
     [Header("Visuals")]
     [SerializeField] private Image BackgroundTerminalImage;
     [SerializeField] private Color BlinkColor = Color.red;
+    [SerializeField] private Color Deathcolor = Color.black;
     [SerializeField] private float BlinkDuration = 0.1f;
     [SerializeField] private int BlinkCount = 3;
+    [Header("UI Shake")]
+    [SerializeField] private RectTransform[] UIPanels; // 4 canvases/panels
+    
+    [Header("UI Canvases")]
+    [SerializeField] private GameObject BlackCanvas;
+    [SerializeField] private GameObject TimerCanvas;
+    [SerializeField] private GameObject OrderCanvas;
+    [SerializeField] private GameObject DarkImage;
+    [SerializeField] private GameObject OverlayCanvas;
+
 
     private bool TimerIsActive = false;
     private float CurrentTime;
     private Color _originalColor;
-    private int lastBeepSecond = -1;
     private bool finalPhaseStarted = false;
     private bool fadeStarted = false;
+    private bool timerEnded = false;
+
+    private float nextNormalBeepTime;
+    private float nextMediumBeepTime;
 
     void Start()
     {
@@ -43,7 +58,11 @@ public class TimerManager : MonoBehaviour
             _originalColor = BackgroundTerminalImage.color;
 
         if (MainMixer != null)
-            MainMixer.SetFloat("Volume", 0f); // reset at start
+            MainMixer.SetFloat("Volume", 0f);
+
+        // Initialize next beep times
+        nextNormalBeepTime = MaxTimeInSeconds;
+        nextMediumBeepTime = 30f;
     }
 
     void Update()
@@ -58,7 +77,6 @@ public class TimerManager : MonoBehaviour
     public void StartTimer()
     {
         TimerIsActive = true;
-        lastBeepSecond = Mathf.FloorToInt(CurrentTime);
     }
 
     private void TimerUpdate()
@@ -69,33 +87,51 @@ public class TimerManager : MonoBehaviour
             if (CurrentTime < 0f) CurrentTime = 0f;
 
             DisplayTime();
-            HandleBeepAndBlink();
+            HandleBeepBlinkShake();
             HandleFinalCountdown();
             HandleFadeOut();
         }
-        else TimerEnd();
+        else if (!timerEnded)
+        {
+            TimerEnd();
+        }
     }
 
-    private void HandleBeepAndBlink()
+    private void HandleBeepBlinkShake()
     {
-        int currentSec = Mathf.FloorToInt(CurrentTime);
+        if (!finalPhaseStarted && CurrentTime <= nextNormalBeepTime)
+        {
+            BeepAndBlink();
+            ShakeUIPanels(0.5f, 5f); // small shake
+            nextNormalBeepTime -= 60f;
+        }
 
         if (finalPhaseStarted)
         {
-            // Below 30s: blink every 5 seconds
-            if (currentSec != lastBeepSecond && currentSec % 5 == 0)
+            if (CurrentTime <= nextMediumBeepTime)
             {
                 StartCoroutine(BlinkImageMultiple());
-                lastBeepSecond = currentSec;
+                ShakeUIPanels(0.5f, 12f); // medium shake
+                nextMediumBeepTime -= 10f;
             }
-            return;
-        }
 
-        // Normal phase: beep every minute
-        if (currentSec != lastBeepSecond && currentSec % 60 == 0)
+            if (CurrentTime <= MaxTimeInSeconds * 0.1f)
+            {
+                float intensity = Mathf.Lerp(15f, 25f, 1f - (CurrentTime / (MaxTimeInSeconds * 0.1f)));
+                ShakeUIPanels(0.5f, intensity);
+            }
+        }
+    }
+
+    private void ShakeUIPanels(float duration, float intensity)
+    {
+        if (UIShake.Instance == null) return;
+        if (UIPanels == null || UIPanels.Length == 0) return;
+
+        foreach (var panel in UIPanels)
         {
-            BeepAndBlink();
-            lastBeepSecond = currentSec;
+            if (panel != null)
+                UIShake.Instance.ShakeUI(panel, duration, intensity);
         }
     }
 
@@ -144,24 +180,24 @@ public class TimerManager : MonoBehaviour
             FinalAudioSource.clip = FinalCountdownClip;
             FinalAudioSource.volume = 1f;
             FinalAudioSource.Play();
+        }
+
+        if (FinalAudioSource2 != null && FinalCountdownClip2 != null)
+        {
             FinalAudioSource2.clip = FinalCountdownClip2;
             FinalAudioSource2.volume = 1f;
             FinalAudioSource2.Play();
-            
         }
+
         yield return null;
     }
 
     private IEnumerator FadeOutAllAudioExceptFinal(float duration)
     {
-        if (MainMixer == null)
-        {
-            Debug.LogWarning("No AudioMixer assigned for fading.");
-            yield break;
-        }
+        if (MainMixer == null) yield break;
 
-        float startVolume = 0f; // 0dB in Unity mixer
-        float endVolume = -80f; // effectively silent
+        float startVolume = 0f;
+        float endVolume = -80f;
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -184,7 +220,31 @@ public class TimerManager : MonoBehaviour
 
     private void TimerEnd()
     {
+        timerEnded = true;
         TimerIsActive = false;
-        // handle game over
+
+        if (FinalAudioSource != null) FinalAudioSource.Stop();
+        if (FinalAudioSource2 != null) FinalAudioSource2.Stop();
+        if (AudioSource != null && DeathClip != null) AudioSource.PlayOneShot(DeathClip);
+
+        ShakeUIPanels(14f, 25f);
+
+        StopAllCoroutines();
+        StartCoroutine(TimerENdRoutine());
+    }
+
+    IEnumerator TimerENdRoutine()
+    {
+        BlackCanvas.gameObject.SetActive(true);
+        OrderCanvas.gameObject.SetActive(false);
+        TimerCanvas.gameObject.SetActive(false);
+        BackgroundTerminalImage.color = Deathcolor;
+        
+        yield return new WaitForSeconds(12f);
+        
+        OverlayCanvas.SetActive(false);
+        DarkImage.SetActive(true);
+        
+        
     }
 }
