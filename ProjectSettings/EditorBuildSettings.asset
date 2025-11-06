@@ -8,12 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Intro.unity
     guid: e3961ffc45db6f84f9689b18d25268ba
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TestScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
     path: Assets/Scenes/TimerScene.unity
     guid: 147d4aef0d3370140bcace8d3f827b2e
+  - enabled: 0
+    path: Assets/Scenes/ColorCodeScene.unity
+    guid: 091165d342ff1a249a3338234440b03b
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 22e335690bc54ad43bbc99bdd4d33f28, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

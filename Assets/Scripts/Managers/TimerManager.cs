@@ -80,6 +80,11 @@ public class TimerManager : MonoBehaviour
         TimerIsActive = true;
     }
 
+    public void PauseTimer()
+    {
+        TimerIsActive = false;
+    }
+
     private void TimerUpdate()
     {
         if (CurrentTime > 0f)

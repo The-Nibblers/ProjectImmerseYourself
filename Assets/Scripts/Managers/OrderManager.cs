@@ -31,16 +31,29 @@ public class OrderManager : MonoBehaviour
     private bool IsOrderShown = false;
     private bool CanPressY = false;
 
+    private void Start()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     void Update()
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             HandleOrderConfirmed();
         }
+        
+        
 
         if (Keyboard.current.tKey.wasPressedThisFrame)
         {
             timerManager.StartTimer();
+        }
+        
+        if (Keyboard.current.pKey.wasPressedThisFrame)
+        {
+            timerManager.PauseTimer();
         }
 
         if (Keyboard.current.uKey.wasPressedThisFrame)

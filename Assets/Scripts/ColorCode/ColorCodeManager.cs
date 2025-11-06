@@ -19,6 +19,7 @@ public class ColorCodeManager : MonoBehaviour
     [SerializeField] private Image image;
     [SerializeField] private TMP_InputField input;
     [SerializeField] private TMP_Text conformationText;
+    [SerializeField] private AudioSource audioSource;
     private colorCode selectedColor;
 
     public void Start()
@@ -50,6 +51,7 @@ public class ColorCodeManager : MonoBehaviour
         input.gameObject.SetActive(false);
         conformationText.gameObject.SetActive(true);
         conformationText.text = "correct!";
+        audioSource.Play();
     }
 
     IEnumerator  InvalidHandling()
