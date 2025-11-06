@@ -46,6 +46,14 @@ public class OrderManager : MonoBehaviour
         {
             timerManager.Addtime(60);
         }
+        
+        if(currentOrderIndex == 1)
+        {
+            if (Keyboard.current.vKey.wasPressedThisFrame)
+            {
+                HandleOrderConfirmed();
+            }
+        }       
     }
 
     private void RandomizeOrder()
