@@ -16,9 +16,11 @@ public class FakeBootScreen : MonoBehaviour
     [SerializeField] private float logoAppearDelay = 2f;       // wait before logo
     [SerializeField] private float logoVisibleTime = 3f;       // logo stays for this long
     [SerializeField] private float fadeDuration = 1f;          // how long the fade-out takes
+    [SerializeField] private AudioSource audioSource;
 
     private void Start()
     {
+        audioSource.Play();
         // disable all scene objects first
         foreach (GameObject obj in objectsToEnable)
             obj.SetActive(false);
