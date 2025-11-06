@@ -1961,11 +1961,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ColorCodeManager
   colorCodeList:
   - color: {r: 0, g: 0, b: 0, a: 1}
-    pass: 5904
-  - color: {r: 1, g: 0, b: 0, a: 1}
-    pass: 3058
+    pass: 9540
+  - color: {r: 1, g: 0.31948578, b: 0, a: 1}
+    pass: 8530
   - color: {r: 0.94202304, g: 1, b: 0, a: 1}
-    pass: 7509
+    pass: 9740
+  - color: {r: 0, g: 0.19308233, b: 1, a: 1}
+    pass: 4321
+  - color: {r: 1, g: 1, b: 1, a: 1}
+    pass: 7532
   image: {fileID: 683751399}
   input: {fileID: 341969097}
   conformationText: {fileID: 467945310}
