@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class TimerManager : MonoBehaviour
 {
@@ -243,8 +244,6 @@ public class TimerManager : MonoBehaviour
         yield return new WaitForSeconds(12f);
         
         OverlayCanvas.SetActive(false);
-        DarkImage.SetActive(true);
-        
-        
+        DarkImage.GameObject().SetActive(true);
     }
 }
