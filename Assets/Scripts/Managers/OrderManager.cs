@@ -29,6 +29,7 @@ public class OrderManager : MonoBehaviour
     private Orders currentOrder;
     private int orderConformations;
     private bool IsOrderShown = false;
+    private bool CanPressY = false;
 
     void Update()
     {
@@ -47,12 +48,11 @@ public class OrderManager : MonoBehaviour
             timerManager.Addtime(60);
         }
         
-        if(currentOrderIndex == 1)
+        if (Keyboard.current.vKey.wasPressedThisFrame)
         {
-            if (Keyboard.current.vKey.wasPressedThisFrame)
-            {
-                HandleOrderConfirmed();
-            }
+            if (!CanPressY) return;
+            HandleOrderConfirmed();
+            CanPressY = false;
         }
     }
 
@@ -62,6 +62,12 @@ public class OrderManager : MonoBehaviour
         currentOrderIndex = Random.Range(0, orderHolder.Count);
         currentOrder = orderHolder[currentOrderIndex];
         OrderImage.sprite = currentOrder.orderImage;
+
+        if (currentOrderIndex == 1)
+        {
+            Debug.Log("Done");
+            CanPressY = true;
+        }
 
         // If order has audio, play its unique sound
         if (currentOrder.HasAudio)

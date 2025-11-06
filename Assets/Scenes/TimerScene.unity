@@ -1152,7 +1152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83befa89441c5f846b8ad08fb4fc5259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimerManager
-  MaxTimeInSeconds: 10
+  MaxTimeInSeconds: 60
   TimerText: {fileID: 1430555870}
   TimerSlider: {fileID: 62900332}
   MainMixer: {fileID: 24100000, guid: d4850cad42d8ec4428f9abb97f3e63b5, type: 2}
